@@ -13,6 +13,7 @@ func CreateWebServer(store *store.PostgresStore) *Server {
 
 	srv.r.POST(kAddPost, srv.AddPost)
 	srv.r.GET(kFetchPosts, srv.FetchPosts)
+	srv.r.POST(kDeletePost, srv.DeletePost)
 	srv.r.Run("localhost:8080")
 
 	zap.S().Infof("Web server created successfully !!")

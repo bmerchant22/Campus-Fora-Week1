@@ -41,7 +41,7 @@ func (p *PostgresStore) ConnectToDatabase() error {
 	return err
 }
 
-func (p *PostgresStore) AddPost(post_id int64, username string, post string) error {
+func (p *PostgresStore) AddPost(post_id int, username string, post string) error {
 	sqlStatement := `
        INSERT INTO posts (post_id, username, post)
 	   VALUES($1, $2, $3);`
@@ -54,8 +54,7 @@ func (p *PostgresStore) AddPost(post_id int64, username string, post string) err
 }
 
 func (p *PostgresStore) FetchPosts() []Post {
-	sqlStatement := `
-      SELECT * FROM posts `
+	sqlStatement := `SELECT * FROM posts`
 	result, err := p.db.Query(sqlStatement)
 	if err != nil {
 		zap.S().Errorf("Error while fetching posts from postgres db : %v", err)
@@ -71,4 +70,12 @@ func (p *PostgresStore) FetchPosts() []Post {
 		posts = append(posts, temp)
 	}
 	return posts
+}
+
+func (p *PostgresStore) DeletePost(post_id int) {
+	sqlStatement := `DELETE FROM posts WHERE post_id = $1`
+	if _, err := p.db.Exec(sqlStatement, post_id); err != nil {
+		zap.S().Errorf("Error occurred while deleting the post : %v", err)
+	}
+	zap.S().Infof("Post deleted successfully !")
 }
