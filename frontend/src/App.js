@@ -5,14 +5,22 @@ export default function MyForm() {
     const [username, setUsername] = useState("")
     const [post, setPost] = useState("")
     const [deleteId, setDeleteId] = useState(0)
+    const [json, setJson] = useState([])
+    const [postMessage, setPostMessage] = useState("")
+    const [deleteMessage, setDeleteMessage] = useState("")
 
-    const handleSubmit = (e) => {
+    const handlePostSubmit = (e) => {
         e.preventDefault();
 
         setId(null)
         setUsername('')
         setPost('')
-        setDeleteId(0)
+    }
+
+    const handleDeletesubmit = (e) => {
+        e.preventDefault();
+
+        setDeleteId(null)
     }
 
     let urlAddPost = "http://localhost:8080/add-post" + "?post_id=" + id + "&username=" + username + "&post=" + post;
@@ -20,9 +28,33 @@ export default function MyForm() {
     let urlFetchPosts = "http://localhost:8080/recent-posts"
     {console.log(id,username,post)}
 
+    async function getPosts() {
+        const response = await fetch(urlFetchPosts);
+        const jsonData = await response.json();
+        setJson(jsonData);
+        console.log(json);
+      }
+     
+    async function addPost() {
+        const response = await fetch(urlAddPost, {
+            method: "POST"
+        })      
+        setPostMessage("Post added successfully")
+        console.log("post message testing"+ postMessage)
+    }  
+
+    async function deletePost() {
+        const response = await fetch(urlDelete, {
+            method: "POST"
+        })      
+        setDeleteMessage("Post deleted successfully")
+        console.log("Delete message testing"+ deleteMessage)
+    }
+      
+
     return(
         <>
-            <form method="post" action={urlAddPost}>
+            <form onSubmit={handlePostSubmit}>
                 <input
                     type="number"
                     id="post_id"
@@ -50,12 +82,13 @@ export default function MyForm() {
                     }
                 />
                 <br/><br/>
-                <button type="submit">
+                <button type="submit" onClick={addPost}>
                     Add post
                 </button>
             </form>
+                <p>{postMessage}</p>
             <br/><br/><br/>
-            <form method = "post" action={urlDelete}>
+            <form onSubmit={handleDeletesubmit}>
                 <input
                     type="text"
                     id="id"
@@ -65,14 +98,30 @@ export default function MyForm() {
                     }
                 />
                 <br/><br/>
-                <button type="submit">
+                <button type="submit" onClick={deletePost}>
                     Delete post
                 </button>
+                <p>{deleteMessage}</p>
             </form>
             <br/><br/><br/>
-            <button >
-                <a href={urlFetchPosts}>Get posts</a>
+            <button onClick={getPosts}>
+                {/* <a href={urlFetchPosts}>Get posts</a> */}
+                Get posts
             </button>
+            <div>
+                <table>
+                <tr>
+                    <th>User</th>
+                    <th>Post</th>
+                </tr>
+            {json.map(jsonData=> 
+                <tr>
+                    <td>{jsonData.Username}</td>
+                    <td>{jsonData.Post}</td>
+                </tr>
+            )}
+                </table>
+            </div>
         </>
   );
 }

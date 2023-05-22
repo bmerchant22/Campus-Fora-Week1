@@ -43,3 +43,7 @@ func (srv *Server) DeletePost(c *gin.Context) {
 	srv.store.DeletePost(int(post_id))
 	c.JSON(http.StatusOK, "Post deleted successfully !")
 }
+
+func MW1(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", "*")
+}

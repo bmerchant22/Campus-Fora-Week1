@@ -11,9 +11,9 @@ func CreateWebServer(store *store.PostgresStore) *Server {
 	srv.store = store
 	srv.r = gin.Default()
 
-	srv.r.POST(kAddPost, srv.AddPost)
-	srv.r.GET(kFetchPosts, srv.FetchPosts)
-	srv.r.POST(kDeletePost, srv.DeletePost)
+	srv.r.POST(kAddPost, MW1, srv.AddPost)
+	srv.r.GET(kFetchPosts, MW1, srv.FetchPosts)
+	srv.r.POST(kDeletePost, MW1, srv.DeletePost)
 	srv.r.Run("localhost:8080")
 
 	zap.S().Infof("Web server created successfully !!")
